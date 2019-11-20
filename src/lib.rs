@@ -3,6 +3,7 @@ use samp::{initialize_plugin};
 
 mod plugin;
 mod value;
+mod idallocator;
 mod collections;
 
 initialize_plugin!(

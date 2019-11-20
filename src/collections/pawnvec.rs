@@ -1,6 +1,7 @@
 use crate::value::PawnValue;
+use crate::idallocator::IdAllocator;
 
-pub struct PawnVec(Vec<PawnValue>);
+/*pub struct PawnVec(Vec<PawnValue>);
 
 impl PawnVec {
 	pub fn new() -> PawnVec {
@@ -34,4 +35,9 @@ impl PawnVec {
 	pub fn as_mut_slice(&mut self) -> &mut [PawnValue] {
 		self.0.as_mut_slice()
 	}
+}*/
+
+pub struct PawnVecs {
+	containers: std::collections::HashMap<i32, Option<Vec<PawnValue>>>,
+	id_allocator: IdAllocator
 }
