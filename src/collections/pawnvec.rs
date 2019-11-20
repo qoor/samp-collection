@@ -1,3 +1,8 @@
+use std::collections::HashMap;
+
+use samp::amx::AmxIdent;
+use log::error;
+
 use crate::value::PawnValue;
 use crate::idallocator::IdAllocator;
 
@@ -38,6 +43,43 @@ impl PawnVec {
 }*/
 
 pub struct PawnVecs {
-	containers: std::collections::HashMap<i32, Option<Vec<PawnValue>>>,
+	containers: HashMap<i32, Option<Vec<PawnValue>>>,
 	id_allocator: IdAllocator
+}
+
+impl PawnVecs {
+	pub fn new() -> PawnVecs {
+		Self {
+			containers: std::collections::HashMap::new(),
+			id_allocator: IdAllocator::new()
+		}
+	}
+
+	pub fn add_container(&mut self) -> i32 {
+		let id = self.id_allocator.get_id();
+		
+		self.containers.insert(id, Some(Vec::new()));
+
+		id
+	}
+	pub fn remove_container(&mut self, id: i32) -> Result<(), ()> {
+		if !self.containers.remove(&id).is_none() {
+			Ok(())
+		} else {
+			Err(())
+		}
+	}
+	pub fn get_mut_container(&mut self, id: i32) -> Result<&mut Vec<PawnValue>, ()> {
+		if let Some(container) = self.containers.get_mut(&id).unwrap() {
+			Ok(container)
+		} else {
+			Err(())
+		}
+	}
+}
+
+pub struct PawnAmxVecs(HashMap<AmxIdent, PawnVecs>);
+
+impl PawnAmxVecs {
+	
 }
