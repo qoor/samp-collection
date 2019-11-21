@@ -3,6 +3,7 @@ mod value;
 mod idallocator;
 mod collection;
 mod natives;
+mod pawniter;
 
 use samp::{initialize_plugin};
 
