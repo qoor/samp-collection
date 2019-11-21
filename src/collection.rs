@@ -33,7 +33,7 @@ impl ContainerList {
 	pub fn remove_container(&mut self, id: i32) -> Result<(), ()> {
 		if !self.containers.remove(&id).is_none() {
 			self.id_allocator.remove_id(id);
-			
+
 			Ok(())
 		} else {
 			Err(())
