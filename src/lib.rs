@@ -1,10 +1,11 @@
-use samp::prelude::*;
-use samp::{initialize_plugin};
-
 mod plugin;
 mod value;
 mod idallocator;
-mod collections;
+mod collection;
+
+use samp::{initialize_plugin};
+
+use collection::PawnAmxContainers;
 
 initialize_plugin!(
     natives: [
@@ -22,7 +23,8 @@ initialize_plugin!(
             .apply();
         
         plugin::SampCollection {
-
+            pawn_vecs: PawnAmxContainers::new(),
+            pawn_hashmaps: PawnAmxContainers::new()
         }
     }
 );
