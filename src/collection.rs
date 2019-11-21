@@ -7,8 +7,7 @@ use crate::value::PawnValue;
 use crate::idallocator::IdAllocator;
 
 pub enum Container {
-	PawnVec(Vec<PawnValue>),
-	PawnHashMap(HashMap<PawnValue, PawnValue>)
+	PawnVec(Vec<PawnValue>)
 }
 
 pub struct ContainerList {
@@ -33,7 +32,16 @@ impl ContainerList {
 	}
 	pub fn remove_container(&mut self, id: i32) -> Result<(), ()> {
 		if !self.containers.remove(&id).is_none() {
+			self.id_allocator.remove_id(id);
+			
 			Ok(())
+		} else {
+			Err(())
+		}
+	}
+	pub fn get_container(&self, id: i32) -> Result<&Container, ()> {
+		if let Some(container) = self.containers.get(&id).unwrap() {
+			Ok(container)
 		} else {
 			Err(())
 		}
@@ -64,7 +72,16 @@ impl PawnAmxContainers {
 
 		self.0.remove(&ident);
 	}
-	pub fn get_mut_vecs(&mut self, amx: &Amx) -> Result<&mut ContainerList, ()> {
+	pub fn get_container_list(&self, amx: &Amx) -> Result<&ContainerList, ()> {
+		let ident = AmxIdent::from(amx.amx().as_ptr());
+
+		if let Some(vecs) = self.0.get(&ident) {
+			Ok(vecs)
+		} else {
+			Err(())
+		}
+	}
+	pub fn get_mut_container_list(&mut self, amx: &Amx) -> Result<&mut ContainerList, ()> {
 		let ident = AmxIdent::from(amx.amx().as_ptr());
 
 		if let Some(vecs) = self.0.get_mut(&ident) {
@@ -73,8 +90,17 @@ impl PawnAmxContainers {
 			Err(())
 		}
 	}
+	pub fn get_container(&self, amx: &Amx, id: i32) -> Result<&Container, ()> {
+		if let Some(vecs) = self.get_container_list(&amx).ok() {
+			if let Some(container) = vecs.get_container(id).ok() {
+				return Ok(container);
+			}
+		}
+
+		Err(())
+	}
 	pub fn get_mut_container(&mut self, amx: &Amx, id: i32) -> Result<&mut Container, ()> {
-		if let Some(vecs) = self.get_mut_vecs(&amx).ok() {
+		if let Some(vecs) = self.get_mut_container_list(&amx).ok() {
 			if let Some(container) = vecs.get_mut_container(id).ok() {
 				return Ok(container);
 			}

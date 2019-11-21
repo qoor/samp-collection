@@ -2,14 +2,19 @@ mod plugin;
 mod value;
 mod idallocator;
 mod collection;
+mod natives;
 
 use samp::{initialize_plugin};
 
+use plugin::SampCollection;
 use collection::PawnAmxContainers;
 
 initialize_plugin!(
     natives: [
-
+        SampCollection::vec_new,
+        SampCollection::vec_with_capacity,
+        SampCollection::vec_drop,
+        SampCollection::vec_capacity
     ],
     {
         let samp_logger = samp::plugin::logger()
