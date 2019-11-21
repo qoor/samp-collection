@@ -427,10 +427,10 @@ impl SampCollection {
 		}
 	}
 
-	#[native(name = "vec_first_int")]
-	pub fn vec_first_int(&mut self, amx: &Amx, id: i32, mut destination: Ref<i32>) -> AmxResult<i32> {
+	#[native(name = "vec_get_int")]
+	pub fn vec_get_int(&mut self, amx: &Amx, id: i32, index: i32, mut destination: Ref<i32>) -> AmxResult<i32> {
 		if let Some(container) = get_container(self, amx, id).ok() {
-			if let Some(value) = container.first() {
+			if let Some(value) = container.get(index as usize) {
 				if let PawnValue::Integer(value) = value {
 					*destination = *value;
 
@@ -441,10 +441,10 @@ impl SampCollection {
 
 		Ok(0)
 	}
-	#[native(name = "vec_first_float")]
-	pub fn vec_first_float(&mut self, amx: &Amx, id: i32, mut destination: Ref<f32>) -> AmxResult<i32> {
+	#[native(name = "vec_get_float")]
+	pub fn vec_get_float(&mut self, amx: &Amx, id: i32, index: i32, mut destination: Ref<f32>) -> AmxResult<i32> {
 		if let Some(container) = get_container(self, amx, id).ok() {
-			if let Some(value) = container.first() {
+			if let Some(value) = container.get(index as usize) {
 				if let PawnValue::Float(value) = value {
 					*destination = *value;
 
@@ -455,10 +455,75 @@ impl SampCollection {
 
 		Ok(0)
 	}
-	#[native(name = "vec_first_array")]
-	pub fn vec_first_array(&mut self, amx: &Amx, id: i32, mut destination: UnsizedBuffer, size: i32) -> AmxResult<i32> {
+	#[native(name = "vec_get_array")]
+	pub fn vec_get_array(&mut self, amx: &Amx, id: i32, index: i32, mut destination: UnsizedBuffer, size: i32) -> AmxResult<i32> {
 		if let Some(container) = get_container(self, amx, id).ok() {
-			if let Some(value) = container.first() {
+			if let Some(value) = container.get(index as usize) {
+				if let PawnValue::Array(value) = value {
+					let buffer = destination.as_mut_ptr();
+					let mut fixed_size = value.len() as i32;
+
+					if fixed_size > size {
+						fixed_size = size;
+					}
+
+					unsafe {
+						std::ptr::copy(value.as_ptr(), buffer, fixed_size as usize);
+					}
+
+					return Ok(1);
+				}
+			}
+		}
+
+		Ok(0)
+	}
+
+	#[native(name = "vec_first_int")]
+	pub fn vec_first_int(&mut self, amx: &Amx, id: i32, destination: Ref<i32>) -> AmxResult<i32> {
+		self.vec_get_int(amx, id, 0, destination)
+	}
+	#[native(name = "vec_first_float")]
+	pub fn vec_first_float(&mut self, amx: &Amx, id: i32, destination: Ref<f32>) -> AmxResult<i32> {
+		self.vec_get_float(amx, id, 0, destination)
+	}
+	#[native(name = "vec_first_array")]
+	pub fn vec_first_array(&mut self, amx: &Amx, id: i32, destination: UnsizedBuffer, size: i32) -> AmxResult<i32> {
+		self.vec_get_array(amx, id, 0, destination, size)
+	}
+
+	#[native(name = "vec_last_int")]
+	pub fn vec_last_int(&mut self, amx: &Amx, id: i32, mut destination: Ref<i32>) -> AmxResult<i32> {
+		if let Some(container) = get_container(self, amx, id).ok() {
+			if let Some(value) = container.last() {
+				if let PawnValue::Integer(value) = value {
+					*destination = *value;
+
+					return Ok(1);
+				}
+			}
+		}
+
+		Ok(0)
+	}
+	#[native(name = "vec_last_float")]
+	pub fn vec_last_float(&mut self, amx: &Amx, id: i32, mut destination: Ref<f32>) -> AmxResult<i32> {
+		if let Some(container) = get_container(self, amx, id).ok() {
+			if let Some(value) = container.last() {
+				if let PawnValue::Float(value) = value {
+					*destination = *value;
+
+					return Ok(1);
+				}
+			}
+		}
+
+		Ok(0)
+	}
+	#[native(name = "vec_last_array")]
+	pub fn vec_last_array(&mut self, amx: &Amx, id: i32, mut destination: UnsizedBuffer, size: i32) -> AmxResult<i32> {
+		if let Some(container) = get_container(self, amx, id).ok() {
+			if let Some(value) = container.last() {
 				if let PawnValue::Array(value) = value {
 					let buffer = destination.as_mut_ptr();
 					let mut fixed_size = value.len() as i32;

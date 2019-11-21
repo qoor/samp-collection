@@ -44,9 +44,15 @@ initialize_plugin!(
         SampCollection::vec_resize_array,
         SampCollection::vec_dedup,
         SampCollection::vec_is_empty,
+        SampCollection::vec_get_int,
+        SampCollection::vec_get_float,
+        SampCollection::vec_get_array,
         SampCollection::vec_first_int,
         SampCollection::vec_first_float,
-        SampCollection::vec_first_array
+        SampCollection::vec_first_array,
+        SampCollection::vec_last_int,
+        SampCollection::vec_last_float,
+        SampCollection::vec_last_array
     ],
     {
         let samp_logger = samp::plugin::logger()
