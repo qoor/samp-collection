@@ -9,7 +9,7 @@ use crate::plugin::SampCollection;
 use crate::collection::*;
 use crate::value::*;
 
-impl SampCollection {
+impl SampCollection<'static> {
 	#[native(name = "vec_new")]
 	pub fn vec_new(&mut self, amx: &Amx) -> AmxResult<i32> {
 		if let Some(vecs) = self.pawn_vecs.get_mut_container_list(amx).ok() {

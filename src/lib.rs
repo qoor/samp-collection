@@ -9,6 +9,7 @@ use samp::{initialize_plugin};
 
 use plugin::SampCollection;
 use collection::PawnAmxContainers;
+use pawniter::PawnAmxIters;
 
 initialize_plugin!(
     natives: [
@@ -68,6 +69,8 @@ initialize_plugin!(
         
         plugin::SampCollection {
             pawn_vecs: PawnAmxContainers::new(),
+            pawn_vec_iters: PawnAmxIters::new(),
+
             pawn_hashmaps: PawnAmxContainers::new()
         }
     }
