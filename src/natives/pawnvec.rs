@@ -648,26 +648,6 @@ impl SampCollection<'static> {
 		}
 	}
 
-	/*#[native(name = "vec_split_at")]
-	pub fn vec_split_at(&mut self, amx: &Amx, id: i32, mut new_left_id: Ref<i32>, mut new_right_id: Ref<i32>) -> AmxResult<i32> {
-		if let Some(container_list) = self.pawn_vecs.get_mut_container_list(amx) {
-			let container_list: *mut crate::collection::ContainerList<Vec<PawnValue>> = container_list;
-
-			unsafe {
-				if let Some(container) = container_list.as_ref().unwrap().get_container(id) {
-					let (left, right) = container.split_at(id as usize);
-
-					*new_left_id = container_list.as_mut().unwrap().add_container(left.to_vec());
-					*new_right_id = container_list.as_mut().unwrap().add_container(right.to_vec());
-
-					return Ok(1);
-				}
-			}
-		}
-		
-		Ok(0)
-	}*/
-
 	#[native(name = "vec_split_at")]
 	pub fn vec_split_at(&mut self, amx: &Amx, id: i32, mut new_left_id: Ref<i32>, mut new_right_id: Ref<i32>) -> AmxResult<i32> {
 		if let Some(container_list) = self.pawn_vecs.get_mut_container_list(amx) {
