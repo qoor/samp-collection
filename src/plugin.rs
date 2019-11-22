@@ -1,3 +1,5 @@
+use std::collections::*;
+
 use samp::prelude::*;
 use log::{info};
 
@@ -6,10 +8,10 @@ use crate::pawniter::PawnAmxIters;
 use crate::value::PawnValue;
 
 pub struct SampCollection<'a> {
-	pub pawn_vecs: PawnAmxContainers,
+	pub pawn_vecs: PawnAmxContainers<Vec<PawnValue>>,
 	pub pawn_vec_iters: PawnAmxIters<'a, Vec<PawnValue>>,
 
-	pub pawn_hashmaps: PawnAmxContainers
+	pub pawn_hashmaps: PawnAmxContainers<HashMap<PawnValue, PawnValue>>
 }
 
 impl<'a> SampPlugin for SampCollection<'a> {

@@ -3,22 +3,27 @@ use std::collections::HashMap;
 use samp::prelude::*;
 use samp::amx::AmxIdent;
 
+use crate::value::PawnValue;
 use crate::idallocator::IdAllocator;
 
-pub struct ContainerList<T> {
-	containers: HashMap<i32, Option<T>>,
+pub enum Container {
+	PawnVec(Vec<PawnValue>)
+}
+
+pub struct ContainerList {
+	containers: HashMap<i32, Option<Container>>,
 	id_allocator: IdAllocator
 }
 
-impl<T> ContainerList<T> {
-	pub fn new() -> ContainerList<T> {
+impl ContainerList {
+	pub fn new() -> ContainerList {
 		Self {
 			containers: HashMap::new(),
 			id_allocator: IdAllocator::new()
 		}
 	}
 
-	pub fn add_container(&mut self, container: T) -> i32 {
+	pub fn add_container(&mut self, container: Container) -> i32 {
 		let id = self.id_allocator.get_id();
 		
 		self.containers.insert(id, Some(container));
@@ -34,14 +39,14 @@ impl<T> ContainerList<T> {
 			Err(())
 		}
 	}
-	pub fn get_container(&self, id: i32) -> Option<&T> {
+	pub fn get_container(&self, id: i32) -> Option<&Container> {
 		if let Some(container) = self.containers.get(&id).unwrap() {
 			Some(container)
 		} else {
 			None
 		}
 	}
-	pub fn get_mut_container(&mut self, id: i32) -> Option<&mut T> {
+	pub fn get_mut_container(&mut self, id: i32) -> Option<&mut Container> {
 		if let Some(container) = self.containers.get_mut(&id).unwrap() {
 			Some(container)
 		} else {
@@ -50,10 +55,10 @@ impl<T> ContainerList<T> {
 	}
 }
 
-pub struct PawnAmxContainers<T>(HashMap<AmxIdent, ContainerList<T>>);
+pub struct PawnAmxContainers(HashMap<AmxIdent, ContainerList>);
 
-impl<T> PawnAmxContainers<T> {
-	pub fn new() -> PawnAmxContainers<T> {
+impl PawnAmxContainers {
+	pub fn new() -> PawnAmxContainers {
 		Self(HashMap::new())
 	}
 
@@ -67,7 +72,7 @@ impl<T> PawnAmxContainers<T> {
 
 		self.0.remove(&ident);
 	}
-	pub fn get_container_list(&self, amx: &Amx) -> Option<&ContainerList<T>> {
+	pub fn get_container_list(&self, amx: &Amx) -> Option<&ContainerList> {
 		let ident = AmxIdent::from(amx.amx().as_ptr());
 
 		if let Some(vecs) = self.0.get(&ident) {
@@ -76,7 +81,7 @@ impl<T> PawnAmxContainers<T> {
 			None
 		}
 	}
-	pub fn get_mut_container_list(&mut self, amx: &Amx) -> Option<&mut ContainerList<T>> {
+	pub fn get_mut_container_list(&mut self, amx: &Amx) -> Option<&mut ContainerList> {
 		let ident = AmxIdent::from(amx.amx().as_ptr());
 
 		if let Some(vecs) = self.0.get_mut(&ident) {
@@ -85,7 +90,7 @@ impl<T> PawnAmxContainers<T> {
 			None
 		}
 	}
-	pub fn get_container(&self, amx: &Amx, id: i32) -> Option<&T> {
+	pub fn get_container(&self, amx: &Amx, id: i32) -> Option<&Container> {
 		if let Some(vecs) = self.get_container_list(&amx) {
 			if let Some(container) = vecs.get_container(id) {
 				return Some(container);
@@ -94,7 +99,7 @@ impl<T> PawnAmxContainers<T> {
 
 		None
 	}
-	pub fn get_mut_container(&mut self, amx: &Amx, id: i32) -> Option<&mut T> {
+	pub fn get_mut_container(&mut self, amx: &Amx, id: i32) -> Option<&mut Container> {
 		if let Some(vecs) = self.get_mut_container_list(&amx) {
 			if let Some(container) = vecs.get_mut_container(id) {
 				return Some(container);

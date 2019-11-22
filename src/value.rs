@@ -1,16 +1,4 @@
-pub struct PawnArray(Vec<i32>);
-
-impl PawnArray {
-	pub fn new(data: Vec<i32>) -> PawnArray {
-		Self(data)
-	}
-	pub fn len(&self) -> usize {
-		self.0.len()
-	}
-	pub fn as_ptr(&self) -> *const i32 {
-		self.0.as_ptr()
-	}
-}
+use std::cmp::Ordering;
 
 pub enum PawnExportValueType {
 	Integer = 1,
@@ -21,7 +9,7 @@ pub enum PawnExportValueType {
 pub enum PawnValue {
 	Integer(i32),
 	Float(f32),
-	Array(PawnArray)
+	Array(Vec<i32>)
 }
 
 impl Clone for PawnValue {
@@ -30,16 +18,16 @@ impl Clone for PawnValue {
 			PawnValue::Integer(value) => PawnValue::Integer(*value),
 			PawnValue::Float(value) => PawnValue::Float(*value),
 			PawnValue::Array(value) => {
-				let data = value.0.clone();
+				let data = value.clone();
 
-				PawnValue::Array(PawnArray::new(data))
+				PawnValue::Array(data)
 			}
 		}
 	}
 }
 
 impl PartialEq for PawnValue {
-	fn eq(&self, other: &PawnValue) -> bool{
+	fn eq(&self, other: &PawnValue) -> bool {
 		if let PawnValue::Integer(self_value) = self {
 			if let PawnValue::Integer(other_value) = other {
 				return self_value == other_value;
@@ -50,10 +38,84 @@ impl PartialEq for PawnValue {
 			}
 		} else if let PawnValue::Array(self_value) = self {
 			if let PawnValue::Array(other_value) = other {
-				return self_value.0 == other_value.0;
+				return self_value == other_value;
 			}
 		}
 
 		false
 	}
+}
+
+impl Ord for PawnValue {
+	fn cmp(&self, other: &PawnValue) -> Ordering {
+		match self {
+			PawnValue::Integer(self_value) => {
+				match other {
+					PawnValue::Integer(other_value) => {
+						if self_value > other_value {
+							Ordering::Greater
+						} else if self_value < other_value {
+							Ordering::Less
+						} else {
+							Ordering::Equal
+						}
+					},
+					PawnValue::Float(_) => {
+						Ordering::Less
+					},
+					PawnValue::Array(_) => {
+						Ordering::Less
+					}
+				}
+			},
+			PawnValue::Float(self_value) => {
+				match other {
+					PawnValue::Float(other_value) => {
+						if self_value > other_value {
+							Ordering::Greater
+						} else if self_value < other_value {
+							Ordering::Less
+						} else {
+							Ordering::Equal
+						}
+					},
+					PawnValue::Integer(_) => {
+						Ordering::Greater
+					},
+					PawnValue::Array(_) => {
+						Ordering::Less
+					}
+				}
+			},
+			PawnValue::Array(self_value) => {
+				match other {
+					PawnValue::Array(other_value) => {
+						if self_value > other_value {
+							Ordering::Greater
+						} else if self_value < other_value {
+							Ordering::Less
+						} else {
+							Ordering::Equal
+						}
+					},
+					PawnValue::Integer(_) => {
+						Ordering::Greater
+					},
+					PawnValue::Float(_) => {
+						Ordering::Greater
+					}
+				}
+			}
+		}
+	}
+}
+
+impl PartialOrd for PawnValue {
+	fn partial_cmp(&self, other: &PawnValue) -> Option<Ordering> {
+		Some(self.cmp(other))
+	}
+}
+
+impl Eq for PawnValue {
+	
 }

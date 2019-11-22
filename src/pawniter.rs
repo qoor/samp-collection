@@ -3,7 +3,6 @@ use std::collections::HashMap;
 
 use samp::amx::{Amx, AmxIdent};
 
-use crate::value::*;
 use crate::idallocator::IdAllocator;
 
 pub struct PawnIterList<'a, T> {

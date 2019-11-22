@@ -36,7 +36,7 @@ initialize_plugin!(
         SampCollection::vec_pop_float,
         SampCollection::vec_pop_array,
         SampCollection::vec_get_type,
-        //SampCollection::vec_append
+        SampCollection::vec_append,
         SampCollection::vec_drain,
         SampCollection::vec_clear,
         SampCollection::vec_len,
@@ -54,7 +54,16 @@ initialize_plugin!(
         SampCollection::vec_first_array,
         SampCollection::vec_last_int,
         SampCollection::vec_last_float,
-        SampCollection::vec_last_array
+        SampCollection::vec_last_array,
+        SampCollection::vec_contains_int,
+        SampCollection::vec_contains_float,
+        SampCollection::vec_contains_array,
+        SampCollection::vec_binary_search_int,
+        SampCollection::vec_binary_search_float,
+        SampCollection::vec_binary_search_array,
+        SampCollection::vec_sort_unstable,
+        SampCollection::vec_rsort_unstable,
+        SampCollection::vec_split_at
     ],
     {
         let samp_logger = samp::plugin::logger()
