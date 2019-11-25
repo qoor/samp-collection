@@ -322,7 +322,7 @@ impl SampCollection<'static> {
 	}
 
 	#[native(name = "vec_drain")]
-	pub fn vec_drain(&mut self, amx: &Amx, source_id: i32, mut new_id: Ref<i32>, start: i32, end: i32) -> AmxResult<i32> {
+	pub fn vec_drain(&mut self, amx: &Amx, source_id: i32, start: i32, end: i32) -> AmxResult<i32> {
 		if let Some(container_list) = self.pawn_vecs.get_mut_container_list(amx) {
 			if let Some(source_container) = container_list.get_mut_container(source_id) {
 				let new_container: Vec<PawnValue>;
@@ -341,14 +341,12 @@ impl SampCollection<'static> {
 					}
 				}
 
-				*new_id = container_list.add_container(new_container);
-
-				return Ok(1);
+				return Ok(container_list.add_container(new_container));
 			}
 
 		}
 
-		Ok(0)
+		Ok(-1)
 	}
 
 	#[native(name = "vec_clear")]
@@ -372,14 +370,12 @@ impl SampCollection<'static> {
 	}
 
 	#[native(name = "vec_split_off")]
-	pub fn vec_split_off(&mut self, amx: &Amx, id: i32, mut new_id: Ref<i32>, at: i32) -> AmxResult<i32> {
+	pub fn vec_split_off(&mut self, amx: &Amx, id: i32, at: i32) -> AmxResult<i32> {
 		if let Some(container_list) = self.pawn_vecs.get_mut_container_list(amx) {
 			if let Some(container) = container_list.get_mut_container(id) {
 				let new_container = container.split_off(at as usize);
 
-				*new_id = container_list.add_container(new_container);
-
-				return Ok(1);
+				return Ok(container_list.add_container(new_container));
 			}
 		}
 
@@ -701,24 +697,22 @@ impl SampCollection<'static> {
 	}
 
 	#[native(name = "vec_clone")]
-	pub fn vec_clone(&mut self, amx: &Amx, id: i32, mut new_id: Ref<i32>) -> AmxResult<i32> {
+	pub fn vec_clone(&mut self, amx: &Amx, id: i32) -> AmxResult<i32> {
 		let borrowed_self = Rc::new(RefCell::from(self));
 
 		if let Some(container_list) = Rc::clone(&borrowed_self).borrow_mut().pawn_vecs.get_mut_container_list(amx) {
 			if let Some(container) = get_container(&Rc::clone(&borrowed_self).borrow(), amx, id) {
 				let new_container = container.clone();
 
-				*new_id = container_list.add_container(new_container);
-
-				return Ok(1);
+				return Ok(container_list.add_container(new_container));
 			}
 		}
 
-		Ok(0)
+		Ok(-1)
 	}
 
 	#[native(name = "vec_concat")]
-	pub fn vec_concat(&mut self, amx: &Amx, id1: i32, id2: i32, mut new_id: Ref<i32>) -> AmxResult<i32> {
+	pub fn vec_concat(&mut self, amx: &Amx, id1: i32, id2: i32) -> AmxResult<i32> {
 		let borrowed_self = Rc::new(RefCell::from(self));
 
 		if let Some(container_list) = Rc::clone(&borrowed_self).borrow_mut().pawn_vecs.get_mut_container_list(amx) {
@@ -726,14 +720,12 @@ impl SampCollection<'static> {
 				if let Some(container2) = get_container(&Rc::clone(&borrowed_self).borrow(), amx, id2) {
 					let new_container = [container1.as_slice(), container2.as_slice()].concat();
 
-					*new_id = container_list.add_container(new_container);
-
-					return Ok(1);
+					return Ok(container_list.add_container(new_container));
 				}
 			}
 		}
 
-		Ok(0)
+		Ok(-1)
 	}
 }
 
