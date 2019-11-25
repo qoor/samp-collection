@@ -40,8 +40,8 @@ impl<'a, T> PawnIterList<'a, T> {
 	pub fn get_mut_iter(&mut self, id: i32) -> Option<&mut Iter<'a, T>> {
 		self.iterators.get_mut(&id)
 	}
-	pub fn set_iter(&mut self, id: i32, iterator: Iter<'a, T>) {
-		self.iterators.insert(id, iterator).is_some();
+	pub fn set_iter(&mut self, id: i32, iterator: Iter<'a, T>) -> bool {
+		self.iterators.insert(id, iterator).is_some()
 	}
 }
 
@@ -62,11 +62,7 @@ impl<'a, T> PawnAmxIters<'a, T> {
 		self.0.get(&AmxIdent::from(amx.amx().as_ptr()))
 	}
 	pub fn get_mut_iter_list(&mut self, amx: &Amx) -> Option<&mut PawnIterList<'a, T>> {
-		if let Some(list) = self.0.get_mut(&AmxIdent::from(amx.amx().as_ptr())) {
-			Some(list)
-		} else {
-			None
-		}
+		self.0.get_mut(&AmxIdent::from(amx.amx().as_ptr()))
 	}
 	
 	pub fn get_iter(&self, amx: &Amx, id: i32) -> Option<&Iter<T>> {

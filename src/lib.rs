@@ -66,6 +66,7 @@ initialize_plugin!(
         SampCollection::vec_split_at,
         SampCollection::vec_rotate_left,
         SampCollection::vec_rotate_right,
+        SampCollection::vec_sort,
         SampCollection::vec_clone,
         SampCollection::vec_concat
     ],
