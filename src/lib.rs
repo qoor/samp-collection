@@ -80,7 +80,13 @@ initialize_plugin!(
         SampCollection::hashmap_shrink_to_fit,
         SampCollection::hashmap_int_get_int,
         SampCollection::hashmap_int_get_float,
-        SampCollection::hashmap_int_get_array
+        SampCollection::hashmap_int_get_array,
+        SampCollection::hashmap_float_get_int,
+        SampCollection::hashmap_float_get_float,
+        SampCollection::hashmap_float_get_array,
+        SampCollection::hashmap_array_get_int,
+        SampCollection::hashmap_array_get_float,
+        SampCollection::hashmap_array_get_array
     ],
     {
         let samp_logger = samp::plugin::logger()

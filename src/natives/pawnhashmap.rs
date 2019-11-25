@@ -102,7 +102,50 @@ impl SampCollection<'static> {
 		Ok(0)
 	}
 	#[native(name = "hashmap_int_get_float")]
-	pub fn hashmap_int_get_float(&self, amx: &Amx, id: i32, key: f32, mut destination: Ref<f32>) -> AmxResult<i32> {
+	pub fn hashmap_int_get_float(&self, amx: &Amx, id: i32, key: i32, mut destination: Ref<f32>) -> AmxResult<i32> {
+		if let Some(container) = get_container(self, amx, id) {
+			if let Some(entry) = container.get(&PawnValue::Integer(key)) {
+				if let PawnValue::Float(value) = entry {
+					*destination = *value;
+
+					return Ok(1);
+				}
+			}
+		}
+
+		Ok(0)
+	}
+	#[native(name = "hashmap_int_get_array")]
+	pub fn hashmap_int_get_array(&self, amx: &Amx, id: i32, key: i32, mut destination: UnsizedBuffer, dest_size: i32) -> AmxResult<i32> {
+		if let Some(container) = get_container(self, amx, id) {
+			if let Some(entry) = container.get(&PawnValue::Integer(key)) {
+				if let PawnValue::Array(value) = entry {
+					unsafe_copy!(value, destination, dest_size);
+
+					return Ok(1);
+				}
+			}
+		}
+
+		Ok(0)
+	}
+
+	#[native(name = "hashmap_float_get_int")]
+	pub fn hashmap_float_get_int(&self, amx: &Amx, id: i32, key: f32, mut destination: Ref<i32>) -> AmxResult<i32> {
+		if let Some(container) = get_container(self, amx, id) {
+			if let Some(entry) = container.get(&PawnValue::Float(key)) {
+				if let PawnValue::Integer(value) = entry {
+					*destination = *value;
+
+					return Ok(1);
+				}
+			}
+		}
+
+		Ok(0)
+	}
+	#[native(name = "hashmap_float_get_float")]
+	pub fn hashmap_float_get_float(&self, amx: &Amx, id: i32, key: f32, mut destination: Ref<f32>) -> AmxResult<i32> {
 		if let Some(container) = get_container(self, amx, id) {
 			if let Some(entry) = container.get(&PawnValue::Float(key)) {
 				if let PawnValue::Float(value) = entry {
@@ -115,14 +158,61 @@ impl SampCollection<'static> {
 
 		Ok(0)
 	}
-	#[native(name = "hashmap_int_get_array")]
-	pub fn hashmap_int_get_array(&self, amx: &Amx, id: i32, key: UnsizedBuffer, mut destination: UnsizedBuffer, size: i32) -> AmxResult<i32> {
+	#[native(name = "hashmap_float_get_array")]
+	pub fn hashmap_float_get_array(&self, amx: &Amx, id: i32, key: f32, mut destination: UnsizedBuffer, dest_size: i32) -> AmxResult<i32> {
 		if let Some(container) = get_container(self, amx, id) {
-			let key = key.into_sized_buffer(size as usize).to_vec();
+			if let Some(entry) = container.get(&PawnValue::Float(key)) {
+				if let PawnValue::Array(value) = entry {
+					unsafe_copy!(value, destination, dest_size);
+
+					return Ok(1);
+				}
+			}
+		}
+
+		Ok(0)
+	}
+
+	#[native(name = "hashmap_array_get_int")]
+	pub fn hashmap_array_get_int(&self, amx: &Amx, id: i32, key: UnsizedBuffer, mut destination: Ref<i32>, key_size: i32) -> AmxResult<i32> {
+		if let Some(container) = get_container(self, amx, id) {
+			let key = key.into_sized_buffer(key_size as usize).to_vec();
+
+			if let Some(entry) = container.get(&PawnValue::Array(key)) {
+				if let PawnValue::Integer(value) = entry {
+					*destination = *value;
+
+					return Ok(1);
+				}
+			}
+		}
+
+		Ok(0)
+	}
+	#[native(name = "hashmap_array_get_float")]
+	pub fn hashmap_array_get_float(&self, amx: &Amx, id: i32, key: UnsizedBuffer, mut destination: Ref<f32>, key_size: i32) -> AmxResult<i32> {
+		if let Some(container) = get_container(self, amx, id) {
+			let key = key.into_sized_buffer(key_size as usize).to_vec();
+
+			if let Some(entry) = container.get(&PawnValue::Array(key)) {
+				if let PawnValue::Float(value) = entry {
+					*destination = *value;
+
+					return Ok(1);
+				}
+			}
+		}
+
+		Ok(0)
+	}
+	#[native(name = "hashmap_array_get_array")]
+	pub fn hashmap_array_get_array(&self, amx: &Amx, id: i32, key: UnsizedBuffer, mut destination: UnsizedBuffer, key_size: i32, dest_size: i32) -> AmxResult<i32> {
+		if let Some(container) = get_container(self, amx, id) {
+			let key = key.into_sized_buffer(key_size as usize).to_vec();
 
 			if let Some(entry) = container.get(&PawnValue::Array(key)) {
 				if let PawnValue::Array(value) = entry {
-					unsafe_copy!(value, destination, size);
+					unsafe_copy!(value, destination, dest_size);
 
 					return Ok(1);
 				}
