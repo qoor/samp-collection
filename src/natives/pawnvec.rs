@@ -666,6 +666,75 @@ impl SampCollection<'static> {
 		
 		Ok(0)
 	}
+
+	#[native(name = "vec_rotate_left")]
+	pub fn vec_rotate_left(&mut self, amx: &Amx, id: i32, mid: i32) -> AmxResult<i32> {
+		if let Some(container) = get_mut_container(self, amx, id) {
+			container.rotate_left(mid as usize);
+
+			Ok(1)
+		} else {
+			Ok(0)
+		}
+	}
+
+	#[native(name = "vec_rotate_right")]
+	pub fn vec_rotate_right(&mut self, amx: &Amx, id: i32, k: i32) -> AmxResult<i32> {
+		if let Some(container) = get_mut_container(self, amx, id) {
+			container.rotate_right(k as usize);
+
+			Ok(1)
+		} else {
+			Ok(0)
+		}
+	}
+
+	#[native(name = "vec_sort")]
+	pub fn vec_sort(&mut self, amx: &Amx, id: i32) -> AmxResult<i32> {
+		if let Some(container) = get_mut_container(self, amx, id) {
+			container.sort();
+
+			Ok(1)
+		} else {
+			Ok(0)
+		}
+	}
+
+	#[native(name = "vec_clone")]
+	pub fn vec_clone(&mut self, amx: &Amx, id: i32, mut new_id: Ref<i32>) -> AmxResult<i32> {
+		let borrowed_self = Rc::new(RefCell::from(self));
+
+		if let Some(container_list) = Rc::clone(&borrowed_self).borrow_mut().pawn_vecs.get_mut_container_list(amx) {
+			if let Some(container) = get_container(&Rc::clone(&borrowed_self).borrow(), amx, id) {
+				let new_container = container.clone();
+
+				*new_id = container_list.add_container(new_container);
+
+				return Ok(1);
+			}
+		}
+
+		Ok(0)
+	}
+
+	#[native(name = "vec_concat")]
+	pub fn vec_concat(&mut self, amx: &Amx, id1: i32, id2: i32, mut new_id: Ref<i32>) -> AmxResult<i32> {
+		let borrowed_self = Rc::new(RefCell::from(self));
+
+		if let Some(container_list) = Rc::clone(&borrowed_self).borrow_mut().pawn_vecs.get_mut_container_list(amx) {
+			if let Some(container1) = get_container(&Rc::clone(&borrowed_self).borrow(), amx, id1) {
+				if let Some(container2) = get_container(&Rc::clone(&borrowed_self).borrow(), amx, id2) {
+					let new_container = [container1.as_slice(), container2.as_slice()].concat();
+
+					*new_id = container_list.add_container(new_container);
+
+					return Ok(1);
+				}
+			}
+		}
+
+		Ok(0)
+	}
 }
 
 fn get_container<'a>(plugin: &'a SampCollection, amx: &Amx, id: i32) -> Option<&'a Vec<crate::value::PawnValue>> {

@@ -63,7 +63,11 @@ initialize_plugin!(
         SampCollection::vec_binary_search_array,
         SampCollection::vec_sort_unstable,
         SampCollection::vec_rsort_unstable,
-        SampCollection::vec_split_at
+        SampCollection::vec_split_at,
+        SampCollection::vec_rotate_left,
+        SampCollection::vec_rotate_right,
+        SampCollection::vec_clone,
+        SampCollection::vec_concat
     ],
     {
         let samp_logger = samp::plugin::logger()
