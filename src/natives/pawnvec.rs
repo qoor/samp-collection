@@ -4,6 +4,7 @@ use std::cell::RefCell;
 use samp::prelude::*;
 use samp::native;
 
+use crate::unsafe_copy;
 use crate::plugin::SampCollection;
 use crate::value::*;
 use crate::collection::PawnVec;
@@ -182,16 +183,7 @@ impl SampCollection<'static> {
 		if let Some(container) = get_mut_container(self, amx, id) {
 			match container.remove(index as usize) {
 				PawnValue::Array(value) => {
-					let buffer = destination.as_mut_ptr();
-					let mut fixed_size = value.len() as i32;
-
-					if fixed_size > size {
-						fixed_size = size;
-					}
-
-					unsafe {
-						std::ptr::copy(value.as_ptr(), buffer, fixed_size as usize);
-					}
+					unsafe_copy!(value, destination, size);
 
 					Ok(1)
 				},
@@ -270,16 +262,7 @@ impl SampCollection<'static> {
 		if let Some(container) = get_mut_container(self, amx, id) {
 			match container.pop().unwrap() {
 				PawnValue::Array(value) => {
-					let buffer = destination.as_mut_ptr();
-					let mut fixed_size = value.len() as i32;
-					
-					if fixed_size > size {
-						fixed_size = size;
-					}
-					
-					unsafe {
-						std::ptr::copy(value.as_ptr(), buffer, fixed_size as usize);
-					}
+					unsafe_copy!(value, destination, size);
 
 					Ok(1)
 				},
@@ -469,16 +452,7 @@ impl SampCollection<'static> {
 		if let Some(container) = get_container(self, amx, id) {
 			if let Some(value) = container.get(index as usize) {
 				if let PawnValue::Array(value) = value {
-					let buffer = destination.as_mut_ptr();
-					let mut fixed_size = value.len() as i32;
-
-					if fixed_size > size {
-						fixed_size = size;
-					}
-
-					unsafe {
-						std::ptr::copy(value.as_ptr(), buffer, fixed_size as usize);
-					}
+					unsafe_copy!(value, destination, size);
 
 					return Ok(1);
 				}
@@ -534,16 +508,7 @@ impl SampCollection<'static> {
 		if let Some(container) = get_container(self, amx, id) {
 			if let Some(value) = container.last() {
 				if let PawnValue::Array(value) = value {
-					let buffer = destination.as_mut_ptr();
-					let mut fixed_size = value.len() as i32;
-
-					if fixed_size > size {
-						fixed_size = size;
-					}
-
-					unsafe {
-						std::ptr::copy(value.as_ptr(), buffer, fixed_size as usize);
-					}
+					unsafe_copy!(value, destination, size);
 
 					return Ok(1);
 				}
