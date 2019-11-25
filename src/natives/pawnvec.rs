@@ -6,6 +6,7 @@ use samp::native;
 
 use crate::plugin::SampCollection;
 use crate::value::*;
+use crate::collection::PawnVec;
 
 impl SampCollection<'static> {
 	#[native(name = "vec_new")]
@@ -729,18 +730,10 @@ impl SampCollection<'static> {
 	}
 }
 
-fn get_container<'a>(plugin: &'a SampCollection, amx: &Amx, id: i32) -> Option<&'a Vec<crate::value::PawnValue>> {
-	if let Some(container) = plugin.pawn_vecs.get_container(&amx, id) {
-		Some(container)
-	} else {
-		None
-	}
+fn get_container<'a>(plugin: &'a SampCollection, amx: &Amx, id: i32) -> Option<&'a PawnVec> {
+	plugin.pawn_vecs.get_container(&amx, id)
 }
 
-fn get_mut_container<'a>(plugin: &'a mut SampCollection, amx: &Amx, id: i32) -> Option<&'a mut Vec<crate::value::PawnValue>> {
-	if let Some(container) = plugin.pawn_vecs.get_mut_container(&amx, id) {
-		Some(container)
-	} else {
-		None
-	}
+fn get_mut_container<'a>(plugin: &'a mut SampCollection, amx: &Amx, id: i32) -> Option<&'a mut PawnVec> {
+	plugin.pawn_vecs.get_mut_container(&amx, id)
 }

@@ -4,6 +4,10 @@ use samp::prelude::*;
 use samp::amx::AmxIdent;
 
 use crate::idallocator::IdAllocator;
+use crate::value::PawnValue;
+
+pub type PawnVec = Vec<PawnValue>;
+pub type PawnHashMap = HashMap<PawnValue, PawnValue>;
 
 pub struct ContainerList<T> {
 	containers: HashMap<i32, Option<T>>,

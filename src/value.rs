@@ -1,4 +1,5 @@
 use std::cmp::Ordering;
+use std::hash::{Hash, Hasher};
 
 pub enum PawnExportValueType {
 	Integer = 1,
@@ -118,4 +119,23 @@ impl PartialOrd for PawnValue {
 
 impl Eq for PawnValue {
 	
+}
+
+impl Hash for PawnValue {
+	fn hash<H: Hasher>(&self, state: &mut H) {
+		match self {
+			PawnValue::Integer(value) => {
+				value.hash(state);
+				state.write_i32(PawnExportValueType::Integer as i32);
+			},
+			PawnValue::Float(value) => {
+				value.to_string().hash(state);
+				state.write_i32(PawnExportValueType::Float as i32);
+			},
+			PawnValue::Array(value) => {
+				value.hash(state);
+				state.write_i32(PawnExportValueType::Array as i32);
+			}
+		};
+	}
 }

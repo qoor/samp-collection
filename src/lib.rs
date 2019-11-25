@@ -68,7 +68,19 @@ initialize_plugin!(
         SampCollection::vec_rotate_right,
         SampCollection::vec_sort,
         SampCollection::vec_clone,
-        SampCollection::vec_concat
+        SampCollection::vec_concat,
+
+        SampCollection::hashmap_new,
+        SampCollection::hashmap_with_capacity,
+        SampCollection::hashmap_capacity,
+        SampCollection::hashmap_len,
+        SampCollection::hashmap_is_empty,
+        SampCollection::hashmap_clear,
+        SampCollection::hashmap_reserve,
+        SampCollection::hashmap_shrink_to_fit,
+        SampCollection::hashmap_int_get_int,
+        SampCollection::hashmap_int_get_float,
+        SampCollection::hashmap_int_get_array
     ],
     {
         let samp_logger = samp::plugin::logger()
@@ -89,3 +101,18 @@ initialize_plugin!(
         }
     }
 );
+
+#[macro_export]
+macro_rules! unsafe_copy {
+    ($src:expr, $dest:expr, $dest_size:expr) => {
+        let mut fixed_size = $src.len() as i32;
+
+        if fixed_size > $dest_size {
+            fixed_size = $dest_size;
+        }
+
+        unsafe {
+            std::ptr::copy($src.as_ptr(), $dest.as_mut_ptr(), fixed_size as usize);
+        }
+    };
+}
